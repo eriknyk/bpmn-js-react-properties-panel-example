@@ -1,6 +1,101 @@
-# Getting Started with Create React App
+# (!) Note 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a fork of https://github.com/bpmn-io/bpmn-js-example-react-properties-panel
+with latest version of react, bpmn-js, and app functional component
+
+---
+
+# React Properties Panel for bpmn-js
+
+This example demonstrates a custom properties panel for [bpmn-js](https://github.com/bpmn-io/bpmn-js) written in [React](https://reactjs.org/).
+
+![Demo Screenshot](./resources/screenshot.png)
+
+## About
+
+The component [`PropertiesView`](https://github.com/bpmn-io/bpmn-js-example-react-properties-panel/blob/master/app/properties-panel/PropertiesView.js) implements the properties panel. 
+
+The component is mounted via standard React utilities and receives the BPMN modeler instance as props:
+
+```js
+  <PropertiesView modeler={ modeler } />
+```
+
+As part of its life-cycle hooks it hooks up with bpmn-js change and selection events to react to editor changes:
+
+```js
+class PropertiesView extends React.Component {
+
+  ...
+  
+  componentDidMount() {
+  
+    const {
+       modeler
+    } = this.props;
+    
+    modeler.on('selection.changed', (e) => {
+      this.setElement(e.newSelection[0]);
+    });
+
+    modeler.on('element.changed', (e) => {
+      this.setElement(e.element);
+    });
+  }
+
+}
+```
+
+Rendering the component we may display element properties and apply changes:
+
+```js
+class PropertiesView extends React.Component {
+  
+  ...
+  
+  render() {
+  
+    const {
+      element
+    } = this.state;
+    
+    return (
+      <div>
+        <fieldset>
+          <label>id</label>
+          <span>{ element.id }</span>
+        </fieldset>
+
+        <fieldset>
+          <label>name</label>
+          <input value={ element.businessObject.name || '' } onChange={ (event) => {
+            this.updateName(event.target.value);
+          } } />
+        </fieldset>
+      </div>
+    );
+  }
+  
+  updateName(newName) {
+  
+    const {
+      element
+    } = this.state;
+    
+    const { 
+      modeler
+    } = this.props;
+    
+    const modeling = modeler.get('modeling');
+    
+    modeling.updateLabel(element, newName);
+  }
+}
+```
+
+## License
+
+MIT
 
 ## Available Scripts
 
@@ -29,37 +124,6 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
 ### Deployment
 
